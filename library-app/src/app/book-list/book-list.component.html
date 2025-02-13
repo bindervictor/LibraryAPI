@@ -1,0 +1,31 @@
+<div class="container">
+  <mat-card>
+    <mat-card-actions>
+      <button class="button-container" mat-raised-button color="primary" routerLink="/add-book">
+        Adicionar um Livro
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <h2>Lista de Livros</h2>
+
+  <div class="book-list">
+    <mat-card *ngFor="let book of books">
+      <mat-card-title>{{ book.name }}</mat-card-title>
+      <mat-card-content>
+        <p>Ano: {{ book.year }}</p>
+        <p>Categorias: {{ getCategoryNames(book.categories) }}</p>
+      </mat-card-content>  
+
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/book', book.id]">Detalhes</a>
+        <button mat-button color="accent" [routerLink]="['/edit-book', book.id]">
+          Editar
+        </button>
+        <button mat-button color="warn" (click)="deleteBook(book.id)">
+          Excluir
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

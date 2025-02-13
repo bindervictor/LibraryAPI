@@ -1,0 +1,14 @@
+<div class="container">
+  <mat-card *ngIf="book">
+    <mat-card-title>{{ book.name }}</mat-card-title>
+    <mat-card-content>
+      <p>Ano: {{ book.year }}</p>
+      <p>Categorias: {{ getCategoryNames(book.categories) }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="goBack()">Voltar a lista</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+
