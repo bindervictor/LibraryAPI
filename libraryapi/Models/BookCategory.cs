@@ -7,11 +7,11 @@ namespace LibraryAPI.Models
         [Key]
         public int BookId { get; set; }
 
-        public Book? Book { get; set; } // Permitir nulo
+        public Book? Book { get; set; } 
 
         [Required]
         public int CategoryId { get; set; }
 
-        public Category? Category { get; set; } // Permitir nulo
+        public Category? Category { get; set; } 
     }
 }
