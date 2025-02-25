@@ -18,23 +18,23 @@ namespace LibraryAPI.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
         {
             var books = await _context.Books
                 .Include(b => b.BookCategories)
                     .ThenInclude(bc => bc.Category)
-                .Select(b => new
+                .Select(b => new BookDTO
                 {
-                    b.Id,
-                    b.Name,
-                    b.Year,
+                    Id = b.Id,
+                    Name = b.Name,
+                    Year = b.Year,
                     Categories = b.BookCategories
                         .Where(bc => bc.Category != null) 
-                        .Select(bc => new
+                        .Select(bc => new CategoryDTO
                         {
-                            bc.Category!.Id,
-                            bc.Category.Name
-                        })
+                            Id = bc.Category!.Id,
+                            Name = bc.Category.Name
+                        }).ToList()
                 })
                 .ToListAsync();
 
@@ -43,24 +43,24 @@ namespace LibraryAPI.Controllers
 
         // GET: api/Books/Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<object>> GetBook(int id)
+        public async Task<ActionResult<BookDTO>> GetBook(int id)
         {
             var book = await _context.Books
                 .Include(b => b.BookCategories)
                     .ThenInclude(bc => bc.Category)
                 .Where(b => b.Id == id)
-                .Select(b => new
+                .Select(b => new BookDTO
                 {
-                    b.Id,
-                    b.Name,
-                    b.Year,
+                    Id = b.Id,
+                    Name = b.Name, 
+                    Year = b.Year,
                     Categories = b.BookCategories
-                        .Where(bc => bc.Category != null) 
-                        .Select(bc => new
+                        .Where(bc => bc.Category != null)
+                        .Select(bc => new CategoryDTO
                         {
-                            bc.Category!.Id,
-                            bc.Category.Name
-                        })
+                            Id = bc.Category!.Id,
+                            Name = bc.Category.Name 
+                        }).ToList()
                 })
                 .FirstOrDefaultAsync();
 
