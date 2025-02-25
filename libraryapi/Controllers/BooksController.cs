@@ -16,6 +16,47 @@ namespace LibraryAPI.Controllers
             _context = context;
         }
 
+        // Validações auxiliares 
+
+        private string? ValidateBook(int year)
+        {
+            if (year > DateTime.UtcNow.Year)
+            {
+                return "O ano do livro não pode ser maior que o ano atual.";
+            }
+            return null;
+        }
+
+        private bool BookExists(int id)
+        {
+            return _context.Books.Any(e => e.Id == id);
+        }
+
+        private string? ValidateMaxCategories(List<int> categoryIds)
+        {
+            if (categoryIds.Count > 3)
+            {
+                return "Você pode associar no máximo 3 categorias.";
+            }
+            return null;
+        }
+
+        private async Task<string?> ValidateCategoriesExist(List<int> categoryIds)
+        {
+            var existingCategories = await _context.Categories
+                .Where(c => categoryIds.Contains(c.Id))
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            if (existingCategories.Count != categoryIds.Count)
+            {
+                return "Uma ou mais categorias não existem.";
+            }
+            return null;
+        }
+
+        // Rotas da API 
+
         // GET: api/Books
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooks()
@@ -29,7 +70,7 @@ namespace LibraryAPI.Controllers
                     Name = b.Name,
                     Year = b.Year,
                     Categories = b.BookCategories
-                        .Where(bc => bc.Category != null) 
+                        .Where(bc => bc.Category != null)
                         .Select(bc => new CategoryDTO
                         {
                             Id = bc.Category!.Id,
@@ -52,14 +93,14 @@ namespace LibraryAPI.Controllers
                 .Select(b => new BookDTO
                 {
                     Id = b.Id,
-                    Name = b.Name, 
+                    Name = b.Name,
                     Year = b.Year,
                     Categories = b.BookCategories
                         .Where(bc => bc.Category != null)
                         .Select(bc => new CategoryDTO
                         {
                             Id = bc.Category!.Id,
-                            Name = bc.Category.Name 
+                            Name = bc.Category.Name
                         }).ToList()
                 })
                 .FirstOrDefaultAsync();
@@ -72,31 +113,21 @@ namespace LibraryAPI.Controllers
             return Ok(book);
         }
 
-
         // POST: api/Books
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook([FromBody] BookCreateDTO bookDto)
         {
-            var validationError = ValidateBook(bookDto.Year);
+            var validationError = ValidateBook(bookDto.Year) ?? 
+                                  ValidateMaxCategories(bookDto.CategoryIds) ??
+                                  await ValidateCategoriesExist(bookDto.CategoryIds);
             if (validationError != null)
             {
                 return BadRequest(validationError);
             }
 
-            if (bookDto.CategoryIds.Count > 3)
-            {
-                return BadRequest("Você pode associar no máximo 3 categorias.");
-            }
-
-            // Buscar categorias existentes no banco de dados
             var categories = await _context.Categories
                 .Where(c => bookDto.CategoryIds.Contains(c.Id))
                 .ToListAsync();
-
-            if (categories.Count != bookDto.CategoryIds.Count)
-            {
-                return BadRequest("Uma ou mais categorias não existem.");
-            }
 
             var newBook = new Book
             {
@@ -114,7 +145,6 @@ namespace LibraryAPI.Controllers
             return CreatedAtAction(nameof(GetBook), new { id = newBook.Id }, newBook);
         }
 
-
         // PUT: api/Books/Id
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, [FromBody] BookUpdateDTO bookDto)
@@ -128,25 +158,17 @@ namespace LibraryAPI.Controllers
                 return NotFound();
             }
 
-            var validationError = ValidateBook(bookDto.Year);
+            var validationError = ValidateBook(bookDto.Year) ??
+                                  ValidateMaxCategories(bookDto.CategoryIds) ??
+                                  await ValidateCategoriesExist(bookDto.CategoryIds);
             if (validationError != null)
             {
                 return BadRequest(validationError);
             }
 
-            if (bookDto.CategoryIds.Count > 3)
-            {
-                return BadRequest("Você pode associar no máximo 3 categorias.");
-            }
-
             var categories = await _context.Categories
                 .Where(c => bookDto.CategoryIds.Contains(c.Id))
                 .ToListAsync();
-
-            if (categories.Count != bookDto.CategoryIds.Count)
-            {
-                return BadRequest("Uma ou mais categorias não existem.");
-            }
 
             // Atualiza os dados do livro
             existingBook.Name = bookDto.Name;
@@ -180,23 +202,6 @@ namespace LibraryAPI.Controllers
 
             return NoContent();
         }
-
-        // Método de validação do ano
-        private string? ValidateBook(int year)
-        {
-            if (year > DateTime.UtcNow.Year)
-            {
-                return "O ano do livro não pode ser maior que o ano atual.";
-            }
-            return null;
-        }
-        
-        // Método que verifica se o livro existe
-        private bool BookExists(int id)
-        {
-            return _context.Books.Any(e => e.Id == id);
-        }
-
 
         // DELETE: api/Books/Id
         [HttpDelete("{id}")]
