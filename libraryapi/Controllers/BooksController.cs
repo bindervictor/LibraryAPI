@@ -18,7 +18,7 @@ namespace LibraryAPI.Controllers
 
         // Validações auxiliares 
 
-        private string? ValidateBook(int year)
+        private string? ValidateYear(int year)
         {
             if (year > DateTime.UtcNow.Year)
             {
@@ -117,7 +117,7 @@ namespace LibraryAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook([FromBody] BookCreateDTO bookDto)
         {
-            var validationError = ValidateBook(bookDto.Year) ?? 
+            var validationError = ValidateYear(bookDto.Year) ?? 
                                   ValidateMaxCategories(bookDto.CategoryIds) ??
                                   await ValidateCategoriesExist(bookDto.CategoryIds);
             if (validationError != null)
@@ -158,7 +158,7 @@ namespace LibraryAPI.Controllers
                 return NotFound();
             }
 
-            var validationError = ValidateBook(bookDto.Year) ??
+            var validationError = ValidateYear(bookDto.Year) ??
                                   ValidateMaxCategories(bookDto.CategoryIds) ??
                                   await ValidateCategoriesExist(bookDto.CategoryIds);
             if (validationError != null)
