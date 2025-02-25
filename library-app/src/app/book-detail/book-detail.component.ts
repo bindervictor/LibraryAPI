@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LibraryAppService } from '../library-app.service';
+import { Book } from '../models/book.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -12,8 +13,9 @@ import { CommonModule } from '@angular/common';
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.css'],
 })
+
 export class BookDetailComponent implements OnInit {
-  book: any;
+  book: Book | null = null;
 
   constructor(
     private route: ActivatedRoute,

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LibraryAppService } from '../library-app.service';
+import { Book } from '../models/book.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -13,7 +14,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./book-list.component.css'],
 })
 export class BookListComponent implements OnInit {
-  books: any[] = [];
+  books: Book[] = [];
 
   constructor(private libraryAppService: LibraryAppService) {}
 
