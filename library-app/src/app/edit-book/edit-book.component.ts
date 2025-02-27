@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LibraryAppService } from '../library-app.service';
+import { Category } from '../models/category.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -57,7 +58,7 @@ export class EditBookComponent implements OnInit {
         this.editBookForm.patchValue({
           name: book.name,
           year: book.year,
-          categoryIds: book.categories.map((c: any) => c.id)
+          categoryIds: book.categories.map((c: Category) => c.id)
         });
       },
       error: (err) => console.error('Erro ao carregar o livro:', err),

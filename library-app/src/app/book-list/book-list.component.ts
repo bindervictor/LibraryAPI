@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LibraryAppService } from '../library-app.service';
 import { Book } from '../models/book.model';
+import { Category } from '../models/category.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -41,7 +42,7 @@ export class BookListComponent implements OnInit {
     }
   }
 
-  getCategoryNames(categories: any[]): string {
+  getCategoryNames(categories: Category[]): string {
     return categories.map((cat) => cat.name).join(', ');
   }
 }
