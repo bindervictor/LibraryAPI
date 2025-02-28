@@ -36,6 +36,7 @@ export class EditBookComponent implements OnInit {
     { id: 5, name: 'Fantasia' }
   ];
   bookId!: number;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -49,7 +50,7 @@ export class EditBookComponent implements OnInit {
 
     this.editBookForm = this.fb.group({
       name: ['', Validators.required],
-      year: ['', [Validators.required, Validators.min(1), Validators.max(9999)]],
+      year: ['', [Validators.required, Validators.min(1), Validators.max(this.currentYear)]],
       categoryIds: [[], [Validators.required, Validators.maxLength(3)]]
     });
 

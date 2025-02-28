@@ -9,6 +9,7 @@ namespace LibraryAPI.Models
 
         public Book? Book { get; set; } 
 
+        [Key]
         [Required]
         public int CategoryId { get; set; }
 

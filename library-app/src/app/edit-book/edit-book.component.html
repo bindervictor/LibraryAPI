@@ -17,7 +17,7 @@
           Ano é obrigatório
         </mat-error>
         <mat-error *ngIf="editBookForm.get('year')?.hasError('min') || editBookForm.get('year')?.hasError('max')">
-          Ano deve estar entre 1 e 9999
+          Ano deve estar entre 1 e {{ currentYear }}.
         </mat-error>
       </mat-form-field>
 

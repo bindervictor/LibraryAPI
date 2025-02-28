@@ -36,6 +36,7 @@ export class AddBookComponent {
   ];
 
   bookForm: FormGroup;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -44,7 +45,7 @@ export class AddBookComponent {
   ) {
     this.bookForm = this.fb.group({
       name: ['', [Validators.required]],
-      year: ['', [Validators.required, Validators.min(1), Validators.max(9999)]],
+      year: ['', [Validators.required, Validators.min(1), Validators.max(this.currentYear)]],
       categoryIds: this.fb.control([], [Validators.required, Validators.maxLength(3)])
     });
   }

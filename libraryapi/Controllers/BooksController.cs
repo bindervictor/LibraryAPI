@@ -115,7 +115,7 @@ namespace LibraryAPI.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook([FromBody] BookCreateDTO bookDto)
+        public async Task<ActionResult<BookDTO>> PostBook([FromBody] BookCreateDTO bookDto)
         {
             var validationError = ValidateYear(bookDto.Year) ?? 
                                   ValidateMaxCategories(bookDto.CategoryIds) ??
