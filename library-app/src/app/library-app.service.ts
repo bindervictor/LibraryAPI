@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment.development';
 import { Book, BookCreateDTO } from './models/book.model';
+import { CategoryDTO } from './models/category.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,10 @@ export class LibraryAppService {
 
   getBook(id: number): Observable<Book> {
     return this.http.get<Book>(`${this.apiUrl}/${id}`); 
+  }
+
+  getCategories(): Observable<CategoryDTO[]> {
+    return this.http.get<CategoryDTO[]>(`${this.apiUrl}/categories`);
   }
 
   addBook(book: BookCreateDTO): Observable<Book> {

@@ -1,4 +1,4 @@
-import { Component, } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { LibraryAppService } from '../library-app.service';
@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Category, CategoryDTO } from '../models/category.model';
 
 @Component({
   selector: 'app-add-book',
@@ -26,15 +27,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './add-book.component.html',
   styleUrls: ['./add-book.component.css'],
 })
-export class AddBookComponent {
-  categories = [
-    { id: 1, name: 'Ficção' },
-    { id: 2, name: 'Drama' },
-    { id: 3, name: 'Romance' },
-    { id: 4, name: 'Terror' },
-    { id: 5, name: 'Fantasia' }
-  ];
-
+export class AddBookComponent implements OnInit {
+  categories: CategoryDTO[] = []; 
   bookForm: FormGroup;
   currentYear = new Date().getFullYear();
 
@@ -48,6 +42,20 @@ export class AddBookComponent {
       year: ['', [Validators.required, Validators.min(1), Validators.max(this.currentYear)]],
       categoryIds: this.fb.control([], [Validators.required, Validators.maxLength(3)])
     });
+    this.bookForm.valueChanges.subscribe
+  }
+
+  ngOnInit() {
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.bookService.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => console.error('Erro ao carregar categorias:', err)
+    });
   }
 
   onCategorySelectionChange(selectedIds: number[]) {
@@ -59,10 +67,10 @@ export class AddBookComponent {
     if (this.bookForm.valid) {
       this.bookService.addBook(this.bookForm.value).subscribe({
         next: () => {
-          this.router.navigateByUrl(''); 
+          this.router.navigateByUrl('');
           this.bookForm.reset();
         },
-        error: (err) => console.error('Erro:', err)
+        error: (err) => console.error('Erro ao adicionar livro:', err)
       });
     }
   }

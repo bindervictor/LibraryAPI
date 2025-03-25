@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LibraryAppService } from '../library-app.service';
-import { Category } from '../models/category.model';
+import { CategoryDTO } from '../models/category.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,18 +23,13 @@ import { CommonModule } from '@angular/common';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ]
 })
 export class EditBookComponent implements OnInit {
   editBookForm!: FormGroup;
-  categories = [
-    { id: 1, name: 'Ficção' },
-    { id: 2, name: 'Drama' },
-    { id: 3, name: 'Romance' },
-    { id: 4, name: 'Terror' },
-    { id: 5, name: 'Fantasia' }
-  ];
+  categories: CategoryDTO[] = []; 
   bookId!: number;
   currentYear = new Date().getFullYear();
 
@@ -54,12 +49,26 @@ export class EditBookComponent implements OnInit {
       categoryIds: [[], [Validators.required, Validators.maxLength(3)]]
     });
 
+    this.loadCategories();
+    this.loadBookData();
+  }
+
+  loadCategories() {
+    this.libraryService.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => console.error('Erro ao carregar categorias:', err)
+    });
+  }
+
+  loadBookData() {
     this.libraryService.getBook(this.bookId).subscribe({
       next: (book) => {
         this.editBookForm.patchValue({
           name: book.name,
           year: book.year,
-          categoryIds: book.categories.map((c: Category) => c.id)
+          categoryIds: book.categories.map((c: CategoryDTO) => c.id)
         });
       },
       error: (err) => console.error('Erro ao carregar o livro:', err),

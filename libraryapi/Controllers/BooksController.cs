@@ -82,6 +82,18 @@ namespace LibraryAPI.Controllers
             return Ok(books);
         }
 
+        // GET: api/Books/categories
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new CategoryDTO { Id = c.Id, Name = c.Name })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
+
         // GET: api/Books/Id
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDTO>> GetBook(int id)
